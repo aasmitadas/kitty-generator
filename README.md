@@ -1,2 +1,2 @@
-# kitty-generator
-type your name to get your cat
+Ever wondered what kind of adorable kitty matches your name? Well, wonder no more! This little web app lets you discover your purr-sonal feline friend with just a tap of your paw...
+I mean, keyboard! 🐱💻✨
