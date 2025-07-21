@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐱 Your Personal Kitty Generator 🐱</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+
+    h1 {
+      color: #6B46C1;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #8B5CF6;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 18px 25px;
+      font-size: 1.1rem;
+      border: 3px solid #E5E7EB;
+      border-radius: 25px;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    input[type="text"]:focus {
+      border-color: #8B5CF6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .generate-btn {
+      background: linear-gradient(135deg, #8B5CF6, #EC4899);
+      color: white;
+      border: none;
+      padding: 18px 35px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 8px 25px rgba(178, 154, 236, 0.948);
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(152, 117, 232, 0.744);
+    }
+
+    .cat-result {
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    .cat-result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cat-image {
+      width: 280px;
+      height: 280px;
+      border-radius: 20px;
+      margin: 20px auto;
+      object-fit: cover;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .cat-image:hover {
+      transform: scale(1.05);
+    }
+
+    .cat-name {
+      font-size: 1.3rem;
+      color: #6B46C1;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+
+    .floating-hearts {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      color: #EC4899;
+      font-size: 1.5rem;
+      opacity: 0.7;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .paw-prints {
+      position: absolute;
+      color: rgba(139, 92, 246, 0.1);
+      font-size: 2rem;
+      animation: bounce 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0; transform: scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(180deg); }
+      100% { opacity: 0; transform: scale(0) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="floating-hearts">
+      <div class="heart" style="top: 10%; left: 10%; animation-delay: 0s;">💖</div>
+      <div class="heart" style="top: 20%; right: 15%; animation-delay: 1s;">💕</div>
+      <div class="heart" style="bottom: 30%; left: 20%; animation-delay: 2s;">💗</div>
+      <div class="heart" style="bottom: 15%; right: 10%; animation-delay: 3s;">💝</div>
+      <div class="paw-prints" style="top: 5%; right: 20%; animation-delay: 0s;">🐾</div>
+      <div class="paw-prints" style="bottom: 10%; left: 15%; animation-delay: 2s;">🐾</div>
+    </div>
+
+    <h1>🐱 Your Personal Kitty 🐱</h1>
+    <p class="subtitle">Enter your name and meet your adorable feline friend!</p>
+
+    <input type="text" id="nameInput" placeholder="Type your beautiful name here... ✨" maxlength="50"/>
+    <button class="generate-btn" onclick="generateCat()">Generate My Kitty! 🎀</button>
+
+    <div class="cat-result" id="catResult">
+      <img class="cat-image" id="catImage" alt="Your adorable cat">
+      <div class="cat-name" id="catName"></div>
+    </div>
+  </div>
+
+  <script>
+    const catBreeds = [
+      'Fluffy Persian', 'Playful Siamese', 'Gentle Maine Coon', 'Curious Bengal',
+      'Sweet Ragdoll', 'Elegant Russian Blue', 'Charming British Shorthair', 
+      'Adorable Munchkin', 'Lovely Scottish Fold', 'Precious Himalayan',
+      'Graceful Abyssinian', 'Cuddly Birman', 'Magical Sphynx', 'Royal Egyptian Mau',
+      'Dreamy Turkish Angora', 'Enchanting Siberian', 'Delightful Devon Rex',
+      'Majestic Norwegian Forest', 'Angelic Balinese', 'Mystical Bombay'
+    ];
+
+    const catColors = [
+      'Orange Tabby', 'Tuxedo', 'Calico', 'Tortoiseshell', 'Gray Tabby',
+      'Black', 'White', 'Cream', 'Blue', 'Silver', 'Brown Tabby',
+      'Ginger', 'Chocolate', 'Lilac', 'Cinnamon'
+    ];
+
+    function simpleHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
+    async function generateCat() {
+        const name = document.getElementById('nameInput').value.trim();
+
+  if (!name) {
+    alert('Please enter your name first! 🥺');
+    return;
+  }
+
+  const hash = simpleHash(name.toLowerCase());
+  const breed = catBreeds[hash % catBreeds.length];
+  const color = catColors[(hash * 7) % catColors.length];
+
+  const imageUrl = `https://cataas.com/cat/says/Meow?width=280&height=280&random=${Math.random()}`;
+
+  document.getElementById('catImage').src = imageUrl;
+  document.getElementById('catName').textContent = `Meet ${name}'s ${color} ${breed}! 💕`;
+
+  const result = document.getElementById('catResult');
+  result.classList.add('show');
+
+  createSparkles();
+}
+
+
+    function createSparkles() {
+      const container = document.querySelector('.container');
+      for (let i = 0; i < 8; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.innerHTML = '✨';
+        sparkle.style.position = 'absolute';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.fontSize = '1.5rem';
+        sparkle.style.opacity = '0';
+        sparkle.style.pointerEvents = 'none';
+        sparkle.style.zIndex = '10';
+        sparkle.style.animation = `sparkle 2s ease-out forswards`;
+        container.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 2000);
+      }
+    }
+
+    // Pressing Enter triggers kitty generation
+    document.getElementById('nameInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        generateCat();
+      }
+    });
+  </script>
+</body>
+</html>
